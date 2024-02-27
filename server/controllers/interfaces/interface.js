@@ -56,6 +56,19 @@ exports.getSingleInterface = (req, res) => {
     });
 };
 
+exports.getSingleInterfaceRender = (req, res) => {
+  const interfaceId = req.params.interfaceId;
+
+  Interface.findOne({ _id: interfaceId })
+    .then(interface => {
+      res.render('interface', { interface: interface.toObject() });
+    })
+    .catch(error => {
+      console.log("error", error);
+      res.status(400).json({ err: error });
+    });
+};
+
 exports.updateInterface = (req, res) => {
   const interfaceId = req.params.interfaceId;
   const interfaceData = req.body;

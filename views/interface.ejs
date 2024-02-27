@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Interface</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+</head>
+<body>
+    <div id="app">
+        <interface-component :interface="interface"></interface-component>
+    </div>
+
+    <template id="interface-template">
+        <div>
+            <h1>Interface ID: {{ interface._id }}</h1>
+            <div v-for="widget in interface.widget" :key="widget._id">
+                <h2>Widget ID: {{ widget._id }}</h2>
+                <p>Name: {{ widget.Global.Name }}</p>
+                <p>Model: {{ widget.Global.Model }}</p>
+                <p>ID: {{ widget.Global.ID }}</p>
+                <input v-if="widget.elementHtml === 'input'" type="text" :name="widget.Global.Name" :id="widget.Global.ID">
+                <textarea v-else-if="widget.elementHtml === 'textarea'" :name="widget.Global.Name" :id="widget.Global.ID"></textarea>
+            </div>
+        </div>
+    </template>
+
+    <script id="interface-data" type="application/json">
+        <%= escape(JSON.stringify(interface)) %>
+    </script>
+
+    <script>
+    Vue.component('interface-component', {
+        props: ['interface'],
+        template: '#interface-template'
+    });
+
+    new Vue({
+        el: '#app',
+        data: {
+            interface: JSON.parse(unescape(document.getElementById('interface-data').textContent))
+        }
+    });
+    </script>
+</body>
+</html>

@@ -8,6 +8,7 @@ const morgan = require('morgan');
 const app = express();
 
 app.set('view engine', 'ejs');
+// app.set('views', path_to_views_directory);
 
 app.use(cors({
     credentials: true,
