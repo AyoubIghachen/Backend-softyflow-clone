@@ -7,6 +7,8 @@ const morgan = require('morgan');
 
 const app = express();
 
+app.set('view engine', 'ejs');
+
 app.use(cors({
     credentials: true,
     origin: 'http://localhost:8080',
