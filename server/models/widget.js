@@ -27,9 +27,9 @@ var widgetSchema = mongoose.Schema(
 )
 
 
-widgetSchema.statics.create = function (widgetData, userId) {
+widgetSchema.statics.create = function (widgetsData, userId) {
     var newWidget = new this();
-    newWidget.widget = {
+    newWidget.widget = widgetsData.map(widgetData => ({
         elementHtml: widgetData.elementHtml,
         Global: {
             Name: widgetData.Global.Name,
@@ -41,7 +41,7 @@ widgetSchema.statics.create = function (widgetData, userId) {
         Rules: widgetData.Rules,
         Columns: widgetData.Columns,
         DataSource: widgetData.DataSource
-    };
+    }));
     newWidget.createdBy = userId;
 
     // return the Promise

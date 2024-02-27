@@ -5,31 +5,31 @@ const mongoose = require("mongoose");
 const Widget = mongoose.model("Widget");
 
 exports.createWidget = (req, res) => {
-    const token = req.cookies.token;
-    let userId;
+  const token = req.cookies.token;
+  let userId;
 
-    if (token) {
-        jwt.verify(token, req.app.get('jwt-secret'), (err, decodedToken) => {
-            if (err) {
-                console.log(err);
-                res.status(400).json({ err: error });
-            } else {
-                userId = decodedToken._id;
-                const widgetData = req.body;
+  if (token) {
+      jwt.verify(token, req.app.get('jwt-secret'), (err, decodedToken) => {
+          if (err) {
+              console.log(err);
+              res.status(400).json({ err: error });
+          } else {
+              userId = decodedToken._id;
+              const widgetData = Array.isArray(req.body.widget) ? req.body.widget : [req.body.widget];
 
-                Widget.create(widgetData, userId)
-                    .then(widget => {
-                        res.status(200).json(widget);
-                    })
-                    .catch(error => {
-                        console.log("error", error);
-                        res.status(400).json({ err: error });
-                    });
-            }
-        });
-    } else {
-        res.status(401).json({ err: 'No token provided' });
-    }
+              Widget.create(widgetData, userId)
+                  .then(widget => {
+                      res.status(200).json(widget);
+                  })
+                  .catch(error => {
+                      console.log("error", error);
+                      res.status(400).json({ err: error });
+                  });
+          }
+      });
+  } else {
+      res.status(401).json({ err: 'No token provided' });
+  }
 };
 
 exports.getWidgets = (req, res) => {
