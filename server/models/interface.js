@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 
-var widgetSchema = mongoose.Schema(
+var interfaceSchema = mongoose.Schema(
     {
         widget: [{
             elementHtml: String,
@@ -27,9 +27,9 @@ var widgetSchema = mongoose.Schema(
 )
 
 
-widgetSchema.statics.create = function (widgetsData, userId) {
-    var newWidget = new this();
-    newWidget.widget = widgetsData.map(widgetData => ({
+interfaceSchema.statics.create = function (widgetsData, userId) {
+    var newInterface = new this();
+    newInterface.widget = widgetsData.map(widgetData => ({
         elementHtml: widgetData.elementHtml,
         Global: {
             Name: widgetData.Global.Name,
@@ -42,10 +42,9 @@ widgetSchema.statics.create = function (widgetsData, userId) {
         Columns: widgetData.Columns,
         DataSource: widgetData.DataSource
     }));
-    newWidget.createdBy = userId;
+    newInterface.createdBy = userId;
 
-    // return the Promise
-    return newWidget.save();
+    return newInterface.save();
 }
 
-module.exports = mongoose.model('Widget', widgetSchema);
+module.exports = mongoose.model('Interface', interfaceSchema);

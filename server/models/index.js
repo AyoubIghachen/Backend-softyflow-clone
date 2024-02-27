@@ -1,2 +1,2 @@
 exports.module = require('./user');
-exports.module = require('./widget');
+exports.module = require('./interface');

@@ -2,9 +2,9 @@ const jwt = require('jsonwebtoken');
 
 const mongoose = require("mongoose");
 
-const Widget = mongoose.model("Widget");
+const Interface = mongoose.model("Interface");
 
-exports.createWidget = (req, res) => {
+exports.createInterface = (req, res) => {
   const token = req.cookies.token;
   let userId;
 
@@ -15,11 +15,11 @@ exports.createWidget = (req, res) => {
               res.status(400).json({ err: error });
           } else {
               userId = decodedToken._id;
-              const widgetData = Array.isArray(req.body.widget) ? req.body.widget : [req.body.widget];
+              const widgetsData = Array.isArray(req.body.widget) ? req.body.widget : [req.body.widget];
 
-              Widget.create(widgetData, userId)
-                  .then(widget => {
-                      res.status(200).json(widget);
+              Interface.create(widgetsData, userId)
+                  .then(interface => {
+                      res.status(200).json(interface);
                   })
                   .catch(error => {
                       console.log("error", error);
@@ -32,10 +32,10 @@ exports.createWidget = (req, res) => {
   }
 };
 
-exports.getWidgets = (req, res) => {
-  Widget.find({})
-    .then(widgets => {
-      res.status(200).json(widgets);
+exports.getInterfaces = (req, res) => {
+  Interface.find({})
+    .then(interfaces => {
+      res.status(200).json(interfaces);
     })
     .catch(error => {
       console.log("error", error);
@@ -43,12 +43,12 @@ exports.getWidgets = (req, res) => {
     });
 };
 
-exports.getSingleWidget = (req, res) => {
-  const widgetId = req.params.widgetId;
+exports.getSingleInterface = (req, res) => {
+  const interfaceId = req.params.interfaceId;
 
-  Widget.findOne({ _id: widgetId })
-    .then(widget => {
-      res.status(200).json(widget);
+  Interface.findOne({ _id: interfaceId })
+    .then(interface => {
+      res.status(200).json(interface);
     })
     .catch(error => {
       console.log("error", error);
@@ -56,11 +56,11 @@ exports.getSingleWidget = (req, res) => {
     });
 };
 
-exports.updateWidget = (req, res) => {
-  const widgetId = req.params.widgetId;
-  const widgetData = req.body;
+exports.updateInterface = (req, res) => {
+  const interfaceId = req.params.interfaceId;
+  const interfaceData = req.body;
 
-  Widget.updateOne({ _id: widgetId }, widgetData)
+  Interface.updateOne({ _id: interfaceId }, interfaceData)
     .then(result => {
       res.status(200).json(result);
     })
@@ -70,10 +70,10 @@ exports.updateWidget = (req, res) => {
     });
 };
 
-exports.deleteWidget = (req, res) => {
-  const widgetId = req.params.widgetId;
+exports.deleteInterface = (req, res) => {
+  const interfaceId = req.params.interfaceId;
 
-  Widget.deleteOne({ _id: widgetId })
+  Interface.deleteOne({ _id: interfaceId })
     .then(result => {
       res.status(200).json(result);
     })

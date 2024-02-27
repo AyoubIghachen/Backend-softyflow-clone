@@ -10,7 +10,7 @@ module.exports = function (app) {
   // Set Routes
   require('./auth')( router);
   require('./user')( router);
-  require('./widget')( router);
+  require('./interface')( router);
 
   expressListRoutes(router)
 };
