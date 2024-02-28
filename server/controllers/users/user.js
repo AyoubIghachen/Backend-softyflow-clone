@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
-
 const User = mongoose.model("User");
+
 
 exports.getUsers = (req, res) => {
   const findUser = () => {
@@ -20,6 +20,7 @@ exports.getUsers = (req, res) => {
     .then(respond)
     .catch(onError);
 };
+
 
 exports.getSingleUser = (req, res) => {
   const userId = req.params.userId;
@@ -43,6 +44,7 @@ exports.getSingleUser = (req, res) => {
     .catch(onError);
 };
 
+
 exports.updateUser = (req, res) => {
   const userId = req.params.userId;
   let firstName = req.body.firstName;
@@ -63,6 +65,7 @@ exports.updateUser = (req, res) => {
     .then(respond)
     .catch(onError);
 };
+
 
 exports.deleteUser = (req, res) => {
   const userId = req.params.userId;

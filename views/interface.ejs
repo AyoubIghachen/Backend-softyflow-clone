@@ -3,6 +3,54 @@
 <head>
     <title>Interface</title>
     <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+        #app {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        h2 {
+            color: #666;
+        }
+        p {
+            color: #999;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            height: 20px;
+        }
+
+        .center-text {
+            text-align: center;
+        }
+
+        .widget-name {
+            display: inline-block;
+            margin-right: 30px;
+            font-size: 15px;
+            height: 20px;
+        }
+
+        .widget-wrapper {
+            display: flex;
+            align-items: flex-start;
+        }
+
+    </style>
 </head>
 <body>
     <div id="app">
@@ -11,14 +59,13 @@
 
     <template id="interface-template">
         <div>
-            <h1>Interface ID: {{ interface._id }}</h1>
+            <h1 class="center-text">Test</h1>
             <div v-for="widget in interface.widget" :key="widget._id">
-                <h2>Widget ID: {{ widget._id }}</h2>
-                <p>Name: {{ widget.Global.Name }}</p>
-                <p>Model: {{ widget.Global.Model }}</p>
-                <p>ID: {{ widget.Global.ID }}</p>
-                <input v-if="widget.elementHtml === 'input'" type="text" :name="widget.Global.Name" :id="widget.Global.ID">
-                <textarea v-else-if="widget.elementHtml === 'textarea'" :name="widget.Global.Name" :id="widget.Global.ID"></textarea>
+                <div class="widget-wrapper">
+                    <p class="widget-name">{{ widget.Global.Name }}</p>
+                    <input v-if="widget.elementHtml === 'input'" type="text" :name="widget.Global.Name" :id="widget.Global.ID">
+                    <textarea v-else-if="widget.elementHtml === 'textarea'" :name="widget.Global.Name" :id="widget.Global.ID"></textarea>
+                </div>
             </div>
         </div>
     </template>

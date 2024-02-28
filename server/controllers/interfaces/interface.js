@@ -1,9 +1,8 @@
 const jwt = require('jsonwebtoken');
-
 const mongoose = require("mongoose");
-
 const Interface = mongoose.model("Interface");
 
+// Token to extract user id
 exports.createInterface = (req, res) => {
   const token = req.cookies.token;
   let userId;
@@ -32,6 +31,7 @@ exports.createInterface = (req, res) => {
   }
 };
 
+
 exports.getInterfaces = (req, res) => {
   Interface.find({})
     .then(interfaces => {
@@ -42,6 +42,7 @@ exports.getInterfaces = (req, res) => {
       res.status(400).json({ err: error });
     });
 };
+
 
 exports.getSingleInterface = (req, res) => {
   const interfaceId = req.params.interfaceId;
@@ -56,6 +57,7 @@ exports.getSingleInterface = (req, res) => {
     });
 };
 
+
 exports.getSingleInterfaceRender = (req, res) => {
   const interfaceId = req.params.interfaceId;
 
@@ -68,6 +70,7 @@ exports.getSingleInterfaceRender = (req, res) => {
       res.status(400).json({ err: error });
     });
 };
+
 
 exports.updateInterface = (req, res) => {
   const interfaceId = req.params.interfaceId;
@@ -82,6 +85,7 @@ exports.updateInterface = (req, res) => {
       res.status(400).json({ err: error });
     });
 };
+
 
 exports.deleteInterface = (req, res) => {
   const interfaceId = req.params.interfaceId;

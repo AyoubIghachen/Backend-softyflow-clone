@@ -1,5 +1,4 @@
 const ctrls = require('../controllers/Auth/index.js');
-const auth = require('../config/middlewares/authorizations');
 
 
 module.exports = function (router) {
@@ -15,5 +14,11 @@ module.exports = function (router) {
                         res.clearCookie('token');
                         res.json({ success: true });
                 });
+
+        router.route('/refresh-token')
+                .post(ctrls.auth.refreshToken);
+
+        router.route('/send-email')
+                .post(ctrls.auth.sendEmail);
 
 }

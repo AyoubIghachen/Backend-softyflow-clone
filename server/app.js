@@ -8,7 +8,6 @@ const morgan = require('morgan');
 const app = express();
 
 app.set('view engine', 'ejs');
-// app.set('views', path_to_views_directory);
 
 app.use(cors({
     credentials: true,
@@ -19,6 +18,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json({ limit: '50mb' }));
 
 app.set('jwt-secret', 'formation-softyflow-2024')
+app.set('jwt-refresh-secret', 'refresh-formation-softyflow-2024'); // Refresh Token Secret
 app.use(cookieParser());
 
 app.use(morgan('dev'))
