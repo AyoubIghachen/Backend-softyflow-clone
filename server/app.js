@@ -7,7 +7,7 @@ const morgan = require('morgan');
 
 const app = express();
 
-app.set('view engine', 'ejs');
+app.set('view engine', 'ejs'); // template engine ejs
 
 app.use(cors({
     credentials: true,
@@ -16,6 +16,8 @@ app.use(cors({
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json({ limit: '50mb' }));
+
+// Put the secret and configuration of mongodb in .env file or in a config file
 
 app.set('jwt-secret', 'formation-softyflow-2024')
 app.set('jwt-refresh-secret', 'refresh-formation-softyflow-2024'); // Refresh Token Secret
@@ -37,6 +39,7 @@ mongoose.connect(uri, options)
         console.log('connected to mongodb')
     });
 
+// require('./routes')(app); should be after the require('./models');
 require('./routes')(app);
 
 app.listen(3000, function () {

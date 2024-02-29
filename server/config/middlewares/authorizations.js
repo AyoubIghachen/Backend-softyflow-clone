@@ -26,6 +26,9 @@ exports.requiresLogin = function (req, res, next) {
             message: error.message
         })
     }
+
+    // create a function for the callback function that will pass in p.then 
+    
     p.then((decoded)=>{
         console.log('decoded',decoded)
         req.decoded = decoded

@@ -46,10 +46,16 @@ exports.getSingleUser = (req, res) => {
 
 
 exports.updateUser = (req, res) => {
-  const userId = req.params.userId;
-  let firstName = req.body.firstName;
+  // const userId = req.params.userId;
+  // let firstName = req.body.firstName;
+  // const updateUser = () => {
+  //   return User.updateOne({ _id: userId }, { firstName: firstName })
+  // }
+
+  const { userId : _id } = req.params;
+  let {firstName} = req.body;
   const updateUser = () => {
-    return User.updateOne({ _id: userId }, { firstName: firstName })
+    return User.updateOne({ _id }, { firstName })
   }
 
   const respond = (userData) => {

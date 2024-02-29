@@ -3,6 +3,8 @@ const jwt = require('jsonwebtoken');
 const User = mongoose.model('User');
 const nodemailer = require('nodemailer');
 
+// Put the configuration in the .env file or in the config file
+
 let transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     port: 587,
@@ -13,6 +15,8 @@ let transporter = nodemailer.createTransport({
     }
 });
 
+// Use if/ else if/ else 
+// rethink about the Promise and the callback function of the Promise and the callback function of this callback function
 
 exports.login = (req, res) => {
     const { email, password } = req.body;
@@ -23,7 +27,12 @@ exports.login = (req, res) => {
     const findUserByEmail = () => {
         return User.findOne({ email: email.toLowerCase() })
     }
+ 
+    // null, undefined, false, "", 0,
+    // -1, NaN
+
     const check = (user) => {
+        console.log('user', user);
         if (!user) {
             throw new Error('email doesnt exist')
         } else {
@@ -55,7 +64,9 @@ exports.login = (req, res) => {
                                     expiresIn: '1d',
                                 }
                             );
-
+                                // remove password
+                                delete user.password;
+                                console.log('user', user);
                             resolve({ token, refreshToken, user })
                         })
                 })
@@ -201,3 +212,10 @@ exports.sendEmail = (req, res) => {
         }
     })
 }
+
+
+exports.logout = (req, res) => {
+    res.clearCookie('token');
+    res.json({ success: true });
+}
+

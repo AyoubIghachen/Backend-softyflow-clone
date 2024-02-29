@@ -10,10 +10,7 @@ module.exports = function (router) {
                 .post(ctrls.auth.register);
 
         router.route('/logout')
-                .get((req, res) => {
-                        res.clearCookie('token');
-                        res.json({ success: true });
-                });
+                .get(ctrls.auth.logout);
 
         router.route('/refresh-token')
                 .post(ctrls.auth.refreshToken);

@@ -1,36 +1,29 @@
-const jwt = require('jsonwebtoken');
 const mongoose = require("mongoose");
 const Interface = mongoose.model("Interface");
 
-// Token to extract user id
+
 exports.createInterface = (req, res) => {
-  const token = req.cookies.token;
-  let userId;
+  const widgetsData = req.body.widget;
+  let userId = req.decoded._id;
 
-  if (token) {
-      jwt.verify(token, req.app.get('jwt-secret'), (err, decodedToken) => {
-          if (err) {
-              console.log(err);
-              res.status(400).json({ err: error });
-          } else {
-              userId = decodedToken._id;
-              const widgetsData = Array.isArray(req.body.widget) ? req.body.widget : [req.body.widget];
-
-              Interface.create(widgetsData, userId)
-                  .then(interface => {
-                      res.status(200).json(interface);
-                  })
-                  .catch(error => {
-                      console.log("error", error);
-                      res.status(400).json({ err: error });
-                  });
-          }
-      });
-  } else {
-      res.status(401).json({ err: 'No token provided' });
+  const createInterface = () => {
+    return Interface.create(widgetsData, userId);
   }
+
+  const onResponse = (interface) => {
+    res.status(200).json(interface);
+  }
+  const onError = (error) => {
+    res.status(400).json({ err: error });
+  }
+
+  createInterface()
+    .then(onResponse)
+    .catch(onError);
 };
 
+// Create variable for the the callback function that will pass in p.then
+// const onResponse and onError
 
 exports.getInterfaces = (req, res) => {
   Interface.find({})
@@ -61,14 +54,22 @@ exports.getSingleInterface = (req, res) => {
 exports.getSingleInterfaceRender = (req, res) => {
   const interfaceId = req.params.interfaceId;
 
-  Interface.findOne({ _id: interfaceId })
-    .then(interface => {
-      res.render('interface', { interface: interface.toObject() });
-    })
-    .catch(error => {
-      console.log("error", error);
-      res.status(400).json({ err: error });
-    });
+  const findInterface = () => {
+    return Interface.findOne({ _id: interfaceId });
+  }
+  // Mongo Data Object
+  const renderInterface = (interface) => {
+    res.render('interface', { interface: interface.toObject() });
+  }
+  
+  const onError = () => {
+    res.status(400).json({ err: error });
+  }
+
+  findInterface()
+  .then(renderInterface)
+  .catch(onError);
+
 };
 
 
