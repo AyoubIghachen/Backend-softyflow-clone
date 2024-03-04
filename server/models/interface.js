@@ -1,5 +1,7 @@
 var mongoose = require('mongoose');
 
+// attribut not required
+
 var interfaceSchema = mongoose.Schema(
     {
         widget: [{

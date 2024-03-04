@@ -65,7 +65,8 @@ exports.login = (req, res) => {
                                 }
                             );
                                 // remove password
-                                delete user.password;
+                                // delete user.password; // this one is not working
+                                user.password = undefined;
                                 console.log('user', user);
                             resolve({ token, refreshToken, user })
                         })

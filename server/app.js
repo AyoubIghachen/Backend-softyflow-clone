@@ -11,7 +11,7 @@ app.set('view engine', 'ejs'); // template engine ejs
 
 app.use(cors({
     credentials: true,
-    origin: 'http://localhost:8080',
+    origin: ['http://localhost:8080', 'http://localhost:4200']
 }))
 
 app.use(bodyParser.urlencoded({ extended: false }));
