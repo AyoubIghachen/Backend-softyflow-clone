@@ -7,10 +7,12 @@ module.exports = function (app) {
 
   app.use("", router);
 
+  let base = '/api';
+
   // Set Routes
-  require('./auth')( router);
-  require('./user')( router);
-  require('./interface')( router);
+  require('./auth')(base, router);
+  require('./user')(base, router);
+  require('./project')(base, router);
 
   expressListRoutes(router)
 };

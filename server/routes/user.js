@@ -1,17 +1,13 @@
 const ctrls = require('../controllers/users/index.js');
 const auth = require('../config/middlewares/authorizations');
 
-// change the name of the route to /user
 
-module.exports = function (router) {
+module.exports = function (base, router) {
 
-        // router.route('/user')
-        //         .get(auth.requiresLogin, ctrls.user.getUsers);
-
-        router.route('/get-users')
+        router.route(base + '/user')
                 .get(auth.requiresLogin, ctrls.user.getUsers);
 
-        router.route('/user/:userId')
+        router.route(base + '/user/:userId')
                 .get(auth.requiresLogin, ctrls.user.getSingleUser)
                 .patch(auth.requiresLogin, ctrls.user.updateUser)
                 .delete(auth.requiresLogin, ctrls.user.deleteUser)

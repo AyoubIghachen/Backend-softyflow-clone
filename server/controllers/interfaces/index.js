@@ -1,1 +1,0 @@
-exports.interface = require('./interface')

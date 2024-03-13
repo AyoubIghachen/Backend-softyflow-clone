@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
@@ -7,24 +8,25 @@ const morgan = require('morgan');
 
 const app = express();
 
-app.set('view engine', 'ejs'); // template engine ejs
-
-app.use(cors({
-    credentials: true,
-    origin: ['http://localhost:8080', 'http://localhost:4200']
-}))
+// app.use(cors({
+//     credentials: true,
+//     origin: ['http://localhost:8080', 'http://localhost:4200']
+// }))
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json({ limit: '50mb' }));
-
-// Put the secret and configuration of mongodb in .env file or in a config file
-
-app.set('jwt-secret', 'formation-softyflow-2024')
-app.set('jwt-refresh-secret', 'refresh-formation-softyflow-2024'); // Refresh Token Secret
 app.use(cookieParser());
+app.use(morgan('dev'));
 
-app.use(morgan('dev'))
+
+app.set('jwt-secret', process.env.JWT_SECRET)
+app.set('jwt-refresh-secret', process.env.JWT_REFRESH_SECRET);
+app.set('view engine', 'ejs');
+
+
 require('./models');
+require('./routes')(app);
+
 
 var options = {
     useNewUrlParser: true,
@@ -32,17 +34,14 @@ var options = {
     tlsInsecure: true
 }
 
-const uri = 'mongodb://admin:Password123@ac-1x9raok-shard-00-00.hebktso.mongodb.net:27017,ac-1x9raok-shard-00-01.hebktso.mongodb.net:27017,ac-1x9raok-shard-00-02.hebktso.mongodb.net:27017/BamDB2?ssl=true&replicaSet=atlas-sa3t23-shard-0&authSource=admin&retryWrites=true&w=majority&appName=Cluster0';
+const uri = process.env.MONGODB_URI;
 
 mongoose.connect(uri, options)
     .then(() => {
         console.log('connected to mongodb')
     });
 
-// require('./routes')(app); should be after the require('./models');
-require('./routes')(app);
 
 app.listen(3000, function () {
     console.log('API working on port ' + 3000);
 });
-module.exports = app

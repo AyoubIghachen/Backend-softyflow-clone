@@ -1,92 +1,61 @@
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const User = mongoose.model('User');
-const nodemailer = require('nodemailer');
+const transporter = require('../../../helpers/smtp-config');
 
-// Put the configuration in the .env file or in the config file
-
-let transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 587,
-    secure: false,
-    auth: {
-        user: 'jackdamian422@gmail.com',
-        pass: 'qoqw qlfo ktyl evpb'
-    }
-});
-
-// Use if/ else if/ else 
-// rethink about the Promise and the callback function of the Promise and the callback function of this callback function
 
 exports.login = (req, res) => {
     const { email, password } = req.body;
-
-    const secret = req.app.get('jwt-secret')
-    const refreshSecret = req.app.get('jwt-refresh-secret')
+    const secret = req.app.get('jwt-secret');
+    const refreshSecret = req.app.get('jwt-refresh-secret');
 
     const findUserByEmail = () => {
         return User.findOne({ email: email.toLowerCase() })
-    }
- 
-    // null, undefined, false, "", 0,
-    // -1, NaN
+    };
 
     const check = (user) => {
-        console.log('user', user);
         if (!user) {
             throw new Error('email doesnt exist')
-        } else {
-            if (user.validPassword(password)) {
-                const p = new Promise((resolve, reject) => {
-                    jwt.sign(
-                        {
-                            _id: user._id,
-                            email: user.email,
-                            role: user.role,
-                            age: user.age,
-                            firstName: user.firstName,
-                            lastName: user.lastName,
-                        },
-                        secret,
-                        {
-                            expiresIn: '1h',
-                        }, (err, token) => {
-                            if (err) reject(err)
+        } else if (user.validPassword(password)) {
+            const payload = {
+                _id: user._id,
+                email: user.email,
+                role: user.role,
+                age: user.age,
+                firstName: user.firstName,
+                lastName: user.lastName,
+            };
 
-                            // Create a refresh token
-                            const refreshToken = jwt.sign(
-                                {
-                                    _id: user._id,
-                                    email: user.email,
-                                },
-                                refreshSecret,
-                                {
-                                    expiresIn: '1d',
-                                }
-                            );
-                                // remove password
-                                // delete user.password; // this one is not working
-                                user.password = undefined;
-                                console.log('user', user);
-                            resolve({ token, refreshToken, user })
-                        })
-                })
-                return p;
-            } else {
-                throw new Error('login failed')
-            }
+            const p = new Promise((resolve, reject) => {
+                jwt.sign(payload, secret, { expiresIn: '1h' }, (err, token) => {
+                    if (err) reject(err)
+
+                    const refreshToken = jwt.sign(payload, refreshSecret, { expiresIn: '1d' });
+
+                    // remove password
+                    user.password = undefined;
+
+                    resolve({ token, refreshToken, user })
+                }
+                )
+            });
+
+            return p;
+        } else {
+            throw new Error('login failed')
         }
-    }
+    };
+
     const respond = (userData) => {
-        // res.cookie('token', userData.token, { httpOnly: true });
         res.cookie('token', userData.token);
-        res.cookie('refreshToken', userData.refreshToken); // Sending the refresh token
+        res.cookie('refreshToken', userData.refreshToken);
         res.status(200).json(userData);
-    }
+    };
+
     const onError = (error) => {
         console.log('error', error);
         res.status(400).json({ err: error });
-    }
+    };
 
     findUserByEmail()
         .then(check)
@@ -97,65 +66,52 @@ exports.login = (req, res) => {
 
 exports.register = (req, res) => {
     const userData = req.body;
-    const secret = req.app.get('jwt-secret')
-    const refreshSecret = req.app.get('jwt-refresh-secret')
+    const secret = req.app.get('jwt-secret');
+    const refreshSecret = req.app.get('jwt-refresh-secret');
 
     const findUserByEmail = () => {
         return User.findOne({ email: userData.email.toLowerCase() });
-    }
+    };
 
     const createUser = (user) => {
-        if (user) {
-            throw new Error('email existe deja dans notre base de données');
-        }
+        if (user) throw new Error('email existe deja dans notre base de données');
+
         return User.create(userData);
-    }
+    };
 
     const createToken = (user) => {
+        const payload = {
+            _id: user._id,
+            email: user.email,
+            role: user.role,
+            age: user.age,
+            firstName: user.firstName,
+            lastName: user.lastName,
+        };
+
         const p = new Promise((resolve, reject) => {
-            jwt.sign(
-                {
-                    _id: user._id,
-                    email: user.email,
-                    role: user.role,
-                    age: user.age,
-                    firstName: user.firstName,
-                    lastName: user.lastName,
-                },
-                secret,
-                {
-                    expiresIn: '1h',
-                }, (err, token) => {
-                    if (err) reject(err)
+            jwt.sign(payload, secret, { expiresIn: '1h' }, (err, token) => {
+                if (err) reject(err)
 
-                    // Create a refresh token
-                    const refreshToken = jwt.sign(
-                        {
-                            _id: user._id,
-                            email: user.email,
-                        },
-                        refreshSecret,
-                        {
-                            expiresIn: '1d',
-                        }
-                    );
+                const refreshToken = jwt.sign(payload, refreshSecret, { expiresIn: '1d' });
 
-                    resolve({ token, refreshToken, user })
-                })
-        })
+                resolve({ token, refreshToken, user })
+            })
+        });
+
         return p;
-    }
+    };
 
     const respond = (userData) => {
         res.cookie('token', userData.token);
-        res.cookie('refreshToken', userData.refreshToken); // Sending the refresh token
+        res.cookie('refreshToken', userData.refreshToken);
         res.status(200).json(userData);
-    }
+    };
 
     const onError = (error) => {
         console.log('error', error)
         res.status(404).json({ message: error });
-    }
+    };
 
     findUserByEmail()
         .then(createUser)
@@ -165,30 +121,30 @@ exports.register = (req, res) => {
 }
 
 
+
 exports.refreshToken = (req, res) => {
     const refreshToken = req.cookies.refreshToken;
     const secret = req.app.get('jwt-secret');
     const refreshSecret = req.app.get('jwt-refresh-secret');
 
     if (!refreshToken) {
-        return res.sendStatus(401); // Unauthorized
+        return res.sendStatus(401);
     }
 
     jwt.verify(refreshToken, refreshSecret, (err, user) => {
-        if (err) {
-            return res.sendStatus(403); // Forbidden
-        }
+        if (err) return res.sendStatus(403);
 
-        const accessToken = jwt.sign(
-            {
-                _id: user._id,
-                email: user.email
-            },
-            secret,
-            {
-                expiresIn: '1h'
-            });
-            
+        const payload = {
+            _id: user._id,
+            email: user.email,
+            role: user.role,
+            age: user.age,
+            firstName: user.firstName,
+            lastName: user.lastName,
+        };
+
+        const accessToken = jwt.sign(payload, secret, { expiresIn: '1h' });
+
         res.json({ accessToken });
     });
 }
@@ -206,13 +162,14 @@ exports.sendEmail = (req, res) => {
     transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
             console.log(error);
-            res.status(500).send(error);
+            res.status(500).json({ error: error });
         } else {
             console.log('Email sent: ' + info.response);
-            res.status(200).send('Email sent');
+            res.status(200).json({ message: 'Email sent' });
         }
     })
 }
+
 
 
 exports.logout = (req, res) => {
